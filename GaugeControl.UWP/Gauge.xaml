@@ -1,0 +1,124 @@
+﻿<UserControl x:Class="GaugeControl.UWP.Gauge"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:models="using:GaugeControl.UWP.Models"
+             xmlns:converters="using:GaugeControl.UWP.Converters"
+             xmlns:uwp="using:GaugeControl.UWP"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="UserControlRoot"
+             d:DataContext="{d:DesignInstance uwp:Gauge, IsDesignTimeCreatable=True}"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+    <UserControl.Resources>
+        <converters:NegateNumberConverter x:Key="NegateNumberConverter" />
+        <converters:BoolToAnyConverter x:Key="TickLengthConverter" TrueValue="10" FalseValue="20"/>
+        <converters:BoolToAnyConverter x:Key="BoolToVisibilityConverter">
+            <converters:BoolToAnyConverter.TrueValue>
+                <Visibility>Collapsed</Visibility>
+            </converters:BoolToAnyConverter.TrueValue>
+            <converters:BoolToAnyConverter.FalseValue>
+                <Visibility>Visible</Visibility>
+            </converters:BoolToAnyConverter.FalseValue>
+        </converters:BoolToAnyConverter>
+    </UserControl.Resources>
+
+    <Viewbox>
+        <Grid Width="300" Height="300" Background="#FFFFFF">
+            <!-- Ticks -->
+            <ItemsControl d:DataContext="{Binding ElementName=UserControlRoot, Path=DataContext}" ItemsSource="{Binding Path=Ticks}">
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Grid.Row" Value="1" />
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalAlignment" Value="Top"/>
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <TranslateTransform Y="-2.5" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="models:Tick">
+                        <Grid Height="5" RenderTransformOrigin="0.5,0.5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            
+                            <Grid.RenderTransform>
+                                <RotateTransform Angle="{Binding Path=Angle}" />
+                            </Grid.RenderTransform>
+                            
+                            <Rectangle
+                                Width="{Binding Path=IsInterTick, Converter={StaticResource TickLengthConverter}}"
+                                Height="5"
+                                Fill="Black"
+                                HorizontalAlignment="Left" />
+                            <TextBlock
+                                Text="{Binding Path=Value}"
+                                Visibility="{Binding Path=IsInterTick, Converter={StaticResource BoolToVisibilityConverter}}"
+                                VerticalAlignment="Center"
+                                Margin="5,-10,0,-10"
+                                Grid.Column="1"
+                                RenderTransformOrigin="0.5,0.5">
+                                <TextBlock.RenderTransform>
+                                    <RotateTransform Angle="{Binding Path=Angle, Converter={StaticResource NegateNumberConverter}}" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <!-- /Ticks -->
+
+            <!-- Needle -->
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Rectangle Fill="#FF0000" Height="5" VerticalAlignment="Bottom" RenderTransformOrigin="1,1">
+                    
+                    <Rectangle.RenderTransform>
+                        <TransformGroup>
+                            <TranslateTransform Y="2.5" />
+                            <RotateTransform Angle="{Binding ElementName=UserControlRoot, Path=ValueNeedleAngle, Mode=OneWay}"/>
+                        </TransformGroup>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+
+                <Ellipse
+                    Width="10"
+                    Height="10"
+                    Fill="#FF0000"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,-5,-5"
+                    Grid.Row="0"
+                    Grid.Column="0" />
+            </Grid>
+            <!-- /Needle -->
+        </Grid>
+    </Viewbox>
+</UserControl>
