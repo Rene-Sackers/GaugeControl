@@ -57,3 +57,6 @@ InterTicksEnabled | bool | true | Whether the gauge should draw smaller ticks in
 ## Can I use it?
 I have yet to sort out which one of the licenses I need to apply. Until I find the right one, you can use this in **ANY** situation, with **NO** warranty.  
 That includes commercial usage. As long as you don't claim you made it.
+
+## Credits
+A big thanks to [XamlBrewer](https://github.com/XamlBrewer/UWP-Composition-Radial-Gauge) and their [awesome blog post](https://xamlbrewer.wordpress.com/2016/01/23/building-a-custom-uwp-control-with-xaml-and-the-composition-api/). Lots of good stuff in there.
